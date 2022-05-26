@@ -1,0 +1,12 @@
+select country
+, coalesce(gold, 0) as gold
+, coalesce(silver, 0) as silver
+, coalesce(bronze, 0) as bronze
+from crosstab('select nr.region as country, medal, count(1) as total_medals
+			from OLYMPICS_HISTORY oh
+			join OLYMPICS_HISTORY_noc_regions nr on nr.noc = oh.noc
+			where medal <> ''NA''
+			group by nr.region, medal
+			order by nr.region, medal')
+		as result(country varchar, bronze bigint, gold bigint, silver bigint)
+		order by gold desc, silver desc, bronze desc;
